@@ -1,26 +1,41 @@
+from django.shortcuts import render
+from .models import (Comuna, Nacionalidad, Direccion, Autor, Biblioteca, Libro, Lector, Prestamo)
 from rest_framework import viewsets
-from .models import (comuna,nacionalidad,direccion,autor,Biblioteca,Libro,Lector,Prestamo)
+from .models import (Comuna,Nacionalidad,Direccion,Autor,Biblioteca,Libro,Lector,Prestamo)
 from .serializer import (Comuna_Serializer,nacionalidad_Serializer,direccion_Serializer,autor_Serializer,
 Biblioteca_Serializer, Libro_Serializer,Lector_Serializer, Prestamo_Serializer)
 
+def home(request):
+    libros = Libro.objects.all()
+    autores = Autor.objects.all()
+    lectores = Lector.objects.all()
+    prestamos = Prestamo.objects.all()
+
+    context = {
+        'libros': libros,
+        'autores': autores,
+        'lectores': lectores,
+        'prestamos': prestamos,
+    }
+    return render(request, 'home/inicio.html', context)
 
 class ComunaViewSet(viewsets.ModelViewSet):
-    queryset = comuna.objects.all()
+    queryset = Comuna.objects.all()
     serializer_class = Comuna_Serializer
 
 
 class NacionalidadViewSet(viewsets.ModelViewSet):
-    queryset = nacionalidad.objects.all()
+    queryset = Nacionalidad.objects.all()
     serializer_class = nacionalidad_Serializer
 
 
 class DireccionViewSet(viewsets.ModelViewSet):
-    queryset = direccion.objects.all()
+    queryset = Direccion.objects.all()
     serializer_class = direccion_Serializer
 
 
 class AutorViewSet(viewsets.ModelViewSet):
-    queryset = autor.objects.all()
+    queryset = Autor.objects.all()
     serializer_class = autor_Serializer
 
 

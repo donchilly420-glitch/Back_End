@@ -1,10 +1,8 @@
-from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from Back import views
+from . import views
 
 router = routers.DefaultRouter()
-
 router.register(r'comunas', views.ComunaViewSet)
 router.register(r'nacionalidades', views.NacionalidadViewSet)
 router.register(r'direcciones', views.DireccionViewSet)
@@ -15,10 +13,5 @@ router.register(r'lectores', views.LectorViewSet)
 router.register(r'prestamos', views.PrestamoViewSet)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', views.home, name='home'),   #pagina de incioi
-    path('api/', include('Back.urls')),
+    path('', include(router.urls))
 ]
-
-
-

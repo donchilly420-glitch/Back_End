@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Biblioteca Online</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --surface: #121933;
+      --text: #e6e9f2;
+      --muted: #a1a9c9;
+      --brand: #5b8cff;
+      --brand-2: #6de0ff;
+      --shadow: 0 10px 30px rgba(0,0,0,.25);
+      --radius: 16px;
+    }
+    body { margin:0; font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); }
+    .container { max-width: 1100px; margin:auto; padding:0 20px; }
+    h2 { margin-bottom: 10px; display:flex; justify-content:space-between; align-items:center; }
+    section { padding: 40px 0; }
+    .card { background: var(--surface); border-radius: var(--radius); padding:20px; margin-top:15px; box-shadow: var(--shadow); }
+    input, select, textarea { width:100%; padding:10px; border-radius:10px; border:1px solid #ccc; margin-bottom:15px; }
+    button { padding:10px 18px; border:none; border-radius:8px; cursor:pointer; font-weight:600; }
+    .btn-add { background: var(--brand); color:white; }
+    .btn-close { background: var(--danger); color:white; float:right; }
+    ul { list-style:none; padding:0; margin:0; }
+    li { padding:12px; border-bottom:1px solid rgba(255,255,255,.1); }
+    li:last-child { border-bottom:none; }
+
+    /* Modal */
+    .modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.6); }
+    .modal-content { background:var(--surface); margin:10% auto; padding:20px; border-radius:var(--radius); width:90%; max-width:500px; box-shadow:var(--shadow); }
+  </style>
+</head>
+<body>
+
+<header style="background: linear-gradient(135deg, var(--brand), var(--brand-2)); padding:20px; text-align:center;">
+  <h1>📚 Biblioteca Online</h1>
+</header>
+
+<div class="container">
+
+  <!-- Libros -->
+  <section id="libros">
+    <h2>
+      📖 Libros disponibles
+      <button class="btn-add" onclick="openModal('modal-libro')">➕ Nuevo</button>
+    </h2>
+    <input type="text" id="searchInput-libros" placeholder="Buscar por título o autor...">
+    <div class="card">
+      <ul id="lista-libros">
+        {% for libro in libros %}
+        <li><strong>{{ libro.titulo }}</strong> — {{ libro.id_autor.nombre }}</li>
+        {% empty %}
+        <li>No hay libros registrados.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Autores -->
+  <section id="autores">
+    <h2>
+      ✍️ Autores
+      <button class="btn-add" onclick="openModal('modal-autor')">➕ Nuevo</button>
+    </h2>
+    <input type="text" id="searchInput-autores" placeholder="Buscar por nombre o pseudónimo...">
+    <div class="card">
+      <ul id="lista-autores">
+        {% for autor in autores %}
+        <li>{{ autor.nombre }} {% if autor.pseudonimo %} ({{ autor.pseudonimo }}){% endif %}</li>
+        {% empty %}
+        <li>No hay autores registrados.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Lectores -->
+  <section id="lectores">
+    <h2>
+      👤 Lectores
+      <button class="btn-add" onclick="openModal('modal-lector')">➕ Nuevo</button>
+    </h2>
+    <div class="card">
+      <ul>
+        {% for lector in lectores %}
+        <li>{{ lector.nombre }} — {{ lector.correo }}</li>
+        {% empty %}
+        <li>No hay lectores registrados.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Préstamos -->
+  <section id="prestamos">
+    <h2>
+      📅 Préstamos
+      <button class="btn-add" onclick="openModal('modal-prestamo')">➕ Nuevo</button>
+    </h2>
+    <div class="card">
+      <ul>
+        {% for prestamo in prestamos %}
+        <li>{{ prestamo.id_libro.titulo }} → {{ prestamo.id_lector.nombre }}</li>
+        {% empty %}
+        <li>No hay préstamos registrados.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+
+</div>
+
+<!-- Modales -->
+<div id="modal-libro" class="modal">
+  <div class="modal-content">
+    <button class="btn-close" onclick="closeModal('modal-libro')">✖</button>
+    <h3>Agregar Libro</h3>
+    <form method="post">{% csrf_token %}
+      <input type="text" name="titulo" placeholder="Título" required>
+      <input type="text" name="genero" placeholder="Género">
+      <input type="number" name="paginas" placeholder="Número de páginas" required>
+      <input type="number" name="copias" placeholder="Copias" value="1">
+      <select name="id_autor">{% for autor in autores %}<option value="{{ autor.id }}">{{ autor.nombre }}</option>{% endfor %}</select>
+      <select name="id_biblioteca">{% for b in bibliotecas %}<option value="{{ b.id }}">{{ b.nombre }}</option>{% endfor %}</select>
+      <button type="submit" class="btn-add">Guardar</button>
+    </form>
+  </div>
+</div>
+
+<div id="modal-autor" class="modal">
+  <div class="modal-content">
+    <button class="btn-close" onclick="closeModal('modal-autor')">✖</button>
+    <h3>Agregar Autor</h3>
+    <form method="post">{% csrf_token %}
+      <input type="text" name="nombre" placeholder="Nombre completo" required>
+      <input type="text" name="pseudonimo" placeholder="Pseudónimo">
+      <select name="id_nacionalidad">{% for n in nacionalidades %}<option value="{{ n.id }}">{{ n.nacionalidad }}</option>{% endfor %}</select>
+      <textarea name="bio" placeholder="Biografía"></textarea>
+      <button type="submit" class="btn-add">Guardar</button>
+    </form>
+  </div>
+</div>
+
+<div id="modal-lector" class="modal">
+  <div class="modal-content">
+    <button class="btn-close" onclick="closeModal('modal-lector')">✖</button>
+    <h3>Agregar Lector</h3>
+    <form method="post">{% csrf_token %}
+      <input type="text" name="nombre" placeholder="Nombre completo" required>
+      <input type="text" name="rut" placeholder="RUT" required>
+      <input type="email" name="correo" placeholder="Correo" required>
+      <input type="text" name="telefono" placeholder="Teléfono">
+      <button type="submit" class="btn-add">Guardar</button>
+    </form>
+  </div>
+</div>
+
+<div id="modal-prestamo" class="modal">
+  <div class="modal-content">
+    <button class="btn-close" onclick="closeModal('modal-prestamo')">✖</button>
+    <h3>Registrar Préstamo</h3>
+    <form method="post">{% csrf_token %}
+      <select name="id_libro">{% for libro in libros %}<option value="{{ libro.id }}">{{ libro.titulo }}</option>{% endfor %}</select>
+      <select name="id_lector">{% for lector in lectores %}<option value="{{ lector.id }}">{{ lector.nombre }}</option>{% endfor %}</select>
+      <input type="date" name="fecha_prestamo" required>
+      <input type="date" name="fecha_devolucion" required>
+      <button type="submit" class="btn-add">Guardar</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openModal(id){ document.getElementById(id).style.display = "block"; }
+  function closeModal(id){ document.getElementById(id).style.display = "none"; }
+</script>
+
+</body>
+</html>
