@@ -1,3 +1,6 @@
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from .forms import LibroForm, AutorForm, LectorForm, PrestamoForm
 from django.shortcuts import render
 from .models import (Comuna, Nacionalidad, Direccion, Autor, Biblioteca, Libro, Lector, Prestamo)
 from rest_framework import viewsets
@@ -57,3 +60,94 @@ class LectorViewSet(viewsets.ModelViewSet):
 class PrestamoViewSet(viewsets.ModelViewSet):
     queryset = Prestamo.objects.all()
     serializer_class = Prestamo_Serializer
+
+class LibroList(ListView):
+    model = Libro
+    template_name = 'libro/lista.html'
+    context_object_name = 'libros'
+
+class LibroCreate(CreateView):
+    model = Libro
+    form_class = LibroForm
+    template_name = 'libro/form.html'
+    success_url = reverse_lazy('libro_list')
+
+class LibroUpdate(UpdateView):
+    model = Libro
+    form_class = LibroForm
+    template_name = 'libro/form.html'
+    success_url = reverse_lazy('libro_list')
+
+class LibroDelete(DeleteView):
+    model = Libro
+    template_name = 'libro/confirm_delete.html'
+    success_url = reverse_lazy('libro_list')
+
+# ---- AUTORES ----
+class AutorList(ListView):
+    model = Autor
+    template_name = 'autor/lista.html'
+    context_object_name = 'autores'
+
+class AutorCreate(CreateView):
+    model = Autor
+    form_class = AutorForm
+    template_name = 'autor/form.html'
+    success_url = reverse_lazy('autor_list')
+
+class AutorUpdate(UpdateView):
+    model = Autor
+    form_class = AutorForm
+    template_name = 'autor/form.html'
+    success_url = reverse_lazy('autor_list')
+
+class AutorDelete(DeleteView):
+    model = Autor
+    template_name = 'autor/confirm_delete.html'
+    success_url = reverse_lazy('autor_list')
+
+# ---- LECTORES ----
+class LectorList(ListView):
+    model = Lector
+    template_name = 'lector/lista.html'
+    context_object_name = 'lectores'
+
+class LectorCreate(CreateView):
+    model = Lector
+    form_class = LectorForm
+    template_name = 'lector/form.html'
+    success_url = reverse_lazy('lector_list')
+
+class LectorUpdate(UpdateView):
+    model = Lector
+    form_class = LectorForm
+    template_name = 'lector/form.html'
+    success_url = reverse_lazy('lector_list')
+
+class LectorDelete(DeleteView):
+    model = Lector
+    template_name = 'lector/confirm_delete.html'
+    success_url = reverse_lazy('lector_list')
+
+# ---- PRÉSTAMOS ----
+class PrestamoList(ListView):
+    model = Prestamo
+    template_name = 'prestamo/lista.html'
+    context_object_name = 'prestamos'
+
+class PrestamoCreate(CreateView):
+    model = Prestamo
+    form_class = PrestamoForm
+    template_name = 'prestamo/form.html'
+    success_url = reverse_lazy('prestamo_list')
+
+class PrestamoUpdate(UpdateView):
+    model = Prestamo
+    form_class = PrestamoForm
+    template_name = 'prestamo/form.html'
+    success_url = reverse_lazy('prestamo_list')
+
+class PrestamoDelete(DeleteView):
+    model = Prestamo
+    template_name = 'prestamo/confirm_delete.html'
+    success_url = reverse_lazy('prestamo_list')
